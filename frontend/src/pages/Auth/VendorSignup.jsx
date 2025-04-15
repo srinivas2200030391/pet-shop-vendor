@@ -33,7 +33,7 @@ export default function VendorSignup() {
         withCredentials: true,
       });
       toast.success("Vendor registered successfully!");
-      navigate("/vendor/login");
+      navigate("/");
     } catch (err) {
       console.error(err);
       toast.error(err.response?.data?.message || "Signup failed");

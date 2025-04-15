@@ -3,11 +3,11 @@ import { X } from "lucide-react";
 
 export function CageForm({ cage = {}, onSave, onCancel }) {
   const [formData, setFormData] = useState({
-    cageId: cage.cageId || "",
+    cageNumber: cage.cageNumber || "",
     dimensions: cage.dimensions || "",
     dailyRate: cage.dailyRate || "",
     imageUrl: cage.imageUrl || "",
-    status: cage.status || "available",
+    status: cage.status || "Available",
     availableFrom: cage.availableFrom
       ? new Date(cage.availableFrom).toISOString().split("T")[0]
       : "",
@@ -35,7 +35,7 @@ export function CageForm({ cage = {}, onSave, onCancel }) {
       <div className="bg-white rounded-lg w-3/4 max-w-2xl overflow-hidden">
         <div className="flex justify-between items-center p-4 bg-blue-600 text-white">
           <h2 className="text-xl font-bold">
-            {cage.cageId ? "Edit Cage" : "Add New Cage"}
+            {cage.cageNumber ? "Edit Cage" : "Add New Cage"}
           </h2>
           <button onClick={onCancel} className="text-white">
             <X size={24} />
@@ -46,12 +46,12 @@ export function CageForm({ cage = {}, onSave, onCancel }) {
           <div className="grid grid-cols-2 gap-6">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
-                Cage ID
+                Cage Number
               </label>
               <input
                 type="text"
-                name="cageId"
-                value={formData.cageId}
+                name="cageNumber"
+                value={formData.cageNumber}
                 onChange={handleChange}
                 className="w-full p-2 border rounded-md"
                 required
@@ -98,9 +98,11 @@ export function CageForm({ cage = {}, onSave, onCancel }) {
                 onChange={handleChange}
                 className="w-full p-2 border rounded-md"
                 required>
-                <option value="available">Available</option>
-                <option value="booked">Booked</option>
-                <option value="maintenance">Maintenance</option>
+                <option value="Available">Available</option>
+                <option value="Occupied">Occupied</option>
+                <option value="Maintenance">Maintenance</option>
+                <option value="ExtensionRequired">Extension Required</option>
+                <option value="Pending">Pending</option>
               </select>
             </div>
 
@@ -155,7 +157,7 @@ export function CageForm({ cage = {}, onSave, onCancel }) {
             <button
               type="submit"
               className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700">
-              {cage.cageId ? "Update Cage" : "Add Cage"}
+              {cage.cageNumber ? "Update Cage" : "Add Cage"}
             </button>
           </div>
         </form>

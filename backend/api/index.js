@@ -4,9 +4,13 @@ import cookieParser from "cookie-parser";
 import cors from "cors";
 import { connectDB } from "../lib/db.js";
 import matingPetRoutes from "../routes/matingPet.route.js";
+import cageRoutes from "../routes/cage.route.js";
+import bookedCageRoutes from "../routes/bookedCage.route.js";
+import boardingRequestRoutes from "../routes/boardingrequest.route.js";
+import extensionRequestRoutes from "../routes/extensionrequest.route.js";
+import boardingHistoryRoutes from "../routes/boardinghistory.route.js";
 
-
-import vendorRoutes from "../routes/auth.route.js"
+import vendorRoutes from "../routes/auth.route.js";
 
 const app = express();
 dotenv.config();
@@ -17,14 +21,18 @@ app.use(cookieParser());
 app.use(
   cors({
     origin: "http://localhost:5173",
-    credentials: true, 
+    credentials: true,
   })
 );
 
 connectDB();
 
-
-app.use("/api/vendors", vendorRoutes);   
+app.use("/api/vendors", vendorRoutes);
+app.use("/api/cages", cageRoutes);
+app.use("/api/bookedCages", bookedCageRoutes);
+app.use("/api/boardingRequests", boardingRequestRoutes);
+app.use("/api/extensionRequests", extensionRequestRoutes);
+app.use("/api/boardingHistories", boardingHistoryRoutes);
 
 app.listen(PORT, () => {
   console.log(`✅ Server running on port ${PORT}`);

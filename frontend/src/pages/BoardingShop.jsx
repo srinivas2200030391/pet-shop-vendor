@@ -1,13 +1,15 @@
 import { useState, useEffect } from "react";
 import { DataTable } from "../components/DataTable";
 import {
-  // getBoardingCages,
+  //getBoardingCages,
   getBoardingRequests,
   getBoardingHistory,
-} from "../services/petService";
+} from "../services/petService.js";
 import { Plus } from "lucide-react";
 import { CageForm } from "../components/CageForm";
-import { ConfirmationModal } from './../components/ConfirmationModel';
+import { ConfirmationModal } from "./../components/ConfirmationModel";
+import axios from "axios";
+import config from "./../config";
 
 export default function BoardingShop() {
   const [activeTabIndex, setActiveTabIndex] = useState(0);
@@ -116,6 +118,11 @@ export default function BoardingShop() {
     fetchData();
   }, []);
 
+  const getBoardingCages = async () => {
+    const response = await axios.get(`${config.baseURL}/api/cages`);
+
+    return response.data;
+  };
   const fetchData = async () => {
     setLoading(true);
     try {
@@ -125,6 +132,8 @@ export default function BoardingShop() {
         getBoardingHistory(),
       ]);
       setCages(cagesData);
+      console.log("cagesData", cagesData);
+
       setRequests(requestsData);
       setHistory(historyData);
     } catch (error) {
@@ -136,7 +145,10 @@ export default function BoardingShop() {
 
   const handleAddCage = async (cage) => {
     try {
-      // In a real app, this would call an API to add the cage
+      const response = await axios.post(`${config.baseURL}/api/cages`, cage);
+      if (response.status !== 201) {
+        throw new Error("Failed to add cage");
+      }
       console.log("Adding cage:", cage);
       // Refresh data
       fetchData();
@@ -153,6 +165,13 @@ export default function BoardingShop() {
   const handleUpdateCage = async (updatedCage) => {
     try {
       // In a real app, this would call an API to update the cage
+      const response = await axios.put(
+        `${config.baseURL}/api/cages/${updatedCage._id}`,
+        updatedCage
+      );
+      if (response.status !== 200) {
+        throw new Error("Failed to update cage");
+      }
       console.log("Updating cage:", updatedCage);
       // Refresh data
       fetchData();
@@ -170,6 +189,12 @@ export default function BoardingShop() {
   const handleDeleteCage = async () => {
     try {
       // In a real app, this would call an API to delete the cage
+      const response = await axios.delete(
+        `${config.baseURL}/api/cages/${cageToDelete._id}`
+      );
+      if (response.status !== 200) {
+        throw new Error("Failed to delete cage");
+      }
       console.log("Deleting cage:", cageToDelete);
       // Refresh data
       fetchData();
@@ -216,19 +241,19 @@ export default function BoardingShop() {
   const tabs = [
     {
       name: "Available Cages",
-      count: cages.filter((c) => c.status === "available").length,
+      count: cages.filter((c) => c.status === "Available").length,
     },
     {
       name: "Booked Cages",
-      count: cages.filter((c) => c.status === "booked").length,
+      count: cages.filter((c) => c.status === "Occupied").length,
     },
     {
       name: "Boarding Requests",
-      count: requests.filter((r) => r.status === "pending").length,
+      count: requests.filter((r) => r.status === "Pending").length,
     },
     {
       name: "Extension Requests",
-      count: requests.filter((r) => r.status === "extension_requested").length,
+      count: requests.filter((r) => r.status === "Extension Required").length,
     },
     { name: "Boarding History", count: history.length },
   ];
@@ -256,7 +281,7 @@ export default function BoardingShop() {
               </button>
             </div>
             <DataTable
-              data={cages.filter((cage) => cage.status === "available")}
+              data={cages.filter((cage) => cage.status === "Available")}
               columns={cageColumns}
               actions={true}
               onEdit={handleEditCage}
@@ -271,9 +296,11 @@ export default function BoardingShop() {
               <h2 className="text-xl font-semibold">Booked Cages</h2>
             </div>
             <DataTable
-              data={cages.filter((cage) => cage.status === "booked")}
+              data={cages.filter((cage) => cage.status === "Occupied")}
               columns={cageColumns}
-              actions={false}
+              actions={true}
+              onEdit={handleEditCage}
+              onDelete={confirmDeleteCage}
             />
           </>
         );
@@ -286,7 +313,7 @@ export default function BoardingShop() {
               </h2>
             </div>
             <DataTable
-              data={requests.filter((req) => req.status === "pending")}
+              data={requests.filter((req) => req.status === "Pending")}
               columns={requestColumns}
               actions={true}
               actionButtons={[
@@ -311,9 +338,7 @@ export default function BoardingShop() {
               <h2 className="text-xl font-semibold">Extension Requests</h2>
             </div>
             <DataTable
-              data={requests.filter(
-                (req) => req.status === "extension_requested"
-              )}
+              data={cages.filter((cage) => cage.status === "ExtensionRequired")}
               columns={requestColumns}
               actions={true}
               actionButtons={[

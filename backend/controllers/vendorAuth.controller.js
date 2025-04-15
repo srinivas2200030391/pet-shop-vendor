@@ -6,16 +6,22 @@ export const vendorSignup = async (req, res) => {
   const { name, vendorShopName, sellerId, email, password } = req.body;
   try {
     if (!name || !vendorShopName || !sellerId || !email || !password) {
-      return res.status(400).json({ message: "Please fill in all required fields" });
+      return res
+        .status(400)
+        .json({ message: "Please fill in all required fields" });
     }
 
     if (password.length < 6) {
-      return res.status(400).json({ message: "Password must be at least 6 characters" });
+      return res
+        .status(400)
+        .json({ message: "Password must be at least 6 characters" });
     }
 
     const existingVendor = await Vendor.findOne({ email });
     if (existingVendor) {
-      return res.status(400).json({ message: "Vendor already exists with this email" });
+      return res
+        .status(400)
+        .json({ message: "Vendor already exists with this email" });
     }
 
     const salt = await bcrypt.genSalt(10);
@@ -51,7 +57,9 @@ export const vendorLogin = async (req, res) => {
 
   try {
     if (!email || !password) {
-      return res.status(400).json({ message: "Email and password are required" });
+      return res
+        .status(400)
+        .json({ message: "Email and password are required" });
     }
 
     const vendor = await Vendor.findOne({ email });
@@ -64,7 +72,7 @@ export const vendorLogin = async (req, res) => {
       return res.status(401).json({ message: "Invalid credentials" });
     }
 
-    generatetoken(vendor._id, res);
+    const token = generatetoken(vendor._id, res);
 
     res.status(200).json({
       id: vendor._id,
@@ -72,6 +80,7 @@ export const vendorLogin = async (req, res) => {
       vendorShopName: vendor.vendorShopName,
       email: vendor.email,
       verificationStatus: vendor.verificationStatus,
+      token: token,
     });
   } catch (error) {
     console.error("Login error:", error.message);
@@ -96,17 +105,17 @@ export const vendorLogout = (req, res) => {
   }
 };
 
-
 export const checkauth = async (req, res) => {
   try {
-      // User is already verified by protectroute middleware
-      const user = await Vendor.findById(req.user.id).select("-password");
-      if (!user) {
-          return res.status(401).json({ message: "User not found" });
-      }
-      res.status(200).json(user);
+    // User is added to req.vendor by the protectroute middleware
+    if (!req.vendor) {
+      return res.status(401).json({ message: "User not found" });
+    }
+
+    // Return the vendor data directly
+    res.status(200).json(req.vendor);
   } catch (error) {
-      console.error("Check auth error:", error);
-      res.status(500).json({ message: "Server error" });
+    console.error("Check auth error:", error);
+    res.status(500).json({ message: "Server error" });
   }
 };

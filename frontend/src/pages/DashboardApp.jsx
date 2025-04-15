@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Sidebar } from "../components/Sidebar";
-import AvailablePets from "./AvailablePets"
+import AvailablePets from "./AvailablePets";
 import SoldoutPets from "./SoldoutPets";
 import PetMating from "./PetMating";
 import PetsSoldHistory from "./PetsSoldHistory";
@@ -9,7 +9,6 @@ import { Navigate } from "react-router-dom";
 import { useAuthStore } from "../store/useAuthstore";
 import { Loader } from "lucide-react";
 import { Toaster } from "react-hot-toast";
-
 
 function DashboardApp() {
   const [activeTab, setActiveTab] = useState("available-pets");
@@ -28,7 +27,7 @@ function DashboardApp() {
   }
 
   if (!authUser) {
-    return <Navigate to="/login" />;
+    return <Navigate to="/" />;
   }
 
   const renderContent = () => {
