@@ -1,8 +1,16 @@
 import express from "express";
-const router = express.Router();
-import extensionRequestController from "../controllers/extensionrequest.controller.js";
+import {
+  createExtensionRequest,
+  getAllExtensionRequests,
+  getExtensionRequestById,
+  updateExtensionRequest,
+} from "../controllers/extensionrequest.controller.js";
 
-router.get("/", extensionRequestController.getAllExtensionRequests);
-router.post("/", extensionRequestController.addExtensionRequest);
+const router = express.Router();
+
+router.post("/", createExtensionRequest);
+router.get("/", getAllExtensionRequests);
+router.get("/:id", getExtensionRequestById);
+router.put("/:id", updateExtensionRequest);
 
 export default router;

@@ -8,6 +8,7 @@ export function DataTable({
   onEdit,
   onDelete,
   onStatusChange,
+  actionButtons
 }) {
   const [searchTerm, setSearchTerm] = useState("");
   const [filters, setFilters] = useState({});
@@ -131,22 +132,39 @@ export function DataTable({
                   ))}
                   {actions && (
                     <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                      <button
-                        onClick={() => onEdit(row)}
-                        className="text-indigo-600 hover:text-indigo-900 mr-3">
-                        Edit
-                      </button>
-                      <button
-                        onClick={() => onDelete(row)}
-                        className="text-red-600 hover:text-red-900 mr-3">
-                        Delete
-                      </button>
-                      {row.status === "available" && (
-                        <button
-                          onClick={() => onStatusChange(row, "soldout")}
-                          className="text-green-600 hover:text-green-900">
-                          Mark Sold
-                        </button>
+                      {actionButtons ? (
+                        actionButtons.map((button, i) => (
+                          <button
+                            key={i}
+                            onClick={() => button.onClick(row)}
+                            className={`${button.className} mr-3`}>
+                            {button.label}
+                          </button>
+                        ))
+                      ) : (
+                        <>
+                          {onEdit && (
+                            <button
+                              onClick={() => onEdit(row)}
+                              className="text-indigo-600 hover:text-indigo-900 mr-3">
+                              Edit
+                            </button>
+                          )}
+                          {onDelete && (
+                            <button
+                              onClick={() => onDelete(row)}
+                              className="text-red-600 hover:text-red-900 mr-3">
+                              Delete
+                            </button>
+                          )}
+                          {onStatusChange && row.status === "available" && (
+                            <button
+                              onClick={() => onStatusChange(row, "soldout")}
+                              className="text-green-600 hover:text-green-900">
+                              Mark Sold
+                            </button>
+                          )}
+                        </>
                       )}
                     </td>
                   )}

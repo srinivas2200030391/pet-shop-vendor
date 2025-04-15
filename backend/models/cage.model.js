@@ -11,13 +11,7 @@ const CageSchema = new mongoose.Schema({
   dailyRate: Number,
   status: {
     type: String,
-    enum: [
-      "Available",
-      "Occupied",
-      "Maintenance",
-      "ExtensionRequired",
-      "Pending",
-    ],
+    enum: ["Available", "Occupied", "Maintenance", "Pending"],
     default: "Available",
   },
   availableFrom: Date,

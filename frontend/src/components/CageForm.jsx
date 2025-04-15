@@ -101,7 +101,6 @@ export function CageForm({ cage = {}, onSave, onCancel }) {
                 <option value="Available">Available</option>
                 <option value="Occupied">Occupied</option>
                 <option value="Maintenance">Maintenance</option>
-                <option value="ExtensionRequired">Extension Required</option>
                 <option value="Pending">Pending</option>
               </select>
             </div>

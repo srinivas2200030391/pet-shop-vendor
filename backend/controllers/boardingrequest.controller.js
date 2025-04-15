@@ -31,6 +31,49 @@ const BoardingRequestController = {
     }
   },
 
+  // Get a single boarding request
+  getBoardingRequest: async (req, res) => {
+    try {
+      const id = req.params.id;
+      const boardingRequest = await BoardingRequest.findById(id);
+      if (!boardingRequest) {
+        return res.status(404).json({ error: "Boarding request not found" });
+      }
+      res.json(boardingRequest);
+    } catch (err) {
+      res.status(500).json({ error: err.message });
+    }
+  },
+
+  // Update a boarding request
+  updateBoardingRequest: async (req, res) => {
+    // update the status
+    try {
+      const id = req.params.id;
+      const { status } = req.body;
+      const boardingRequest = await BoardingRequest.findByIdAndUpdate(id, { status }, { new: true });
+      res.json(boardingRequest);
+    } catch (err) {
+      if (err.name === "CastError") {
+        res.status(400).json({ error: "Invalid ID format" });
+      } else {
+        res.status(500).json({ error: err.message });
+      }
+    }
+  },
+  // Delete a boarding request
+  deleteBoardingRequest: async (req, res) => {
+    try {
+      const id = req.params.id;
+      const boardingRequest = await BoardingRequest.findByIdAndDelete(id);
+      if (!boardingRequest) {
+        return res.status(404).json({ error: "Boarding request not found" });
+      }
+      res.json({ message: "Boarding request deleted successfully" });
+    } catch (err) {
+      res.status(500).json({ error: err.message });
+    }
+  },
 }
 
 export default BoardingRequestController;

@@ -6,6 +6,6 @@ const router = express.Router();
 router.post("/signup", vendorSignup);
 router.post("/login", vendorLogin);
 router.post("/logout", vendorLogout);
-router.get("/check", protectroute, checkauth);
+router.get("/check", protectroute,checkauth);
 
 export default router;

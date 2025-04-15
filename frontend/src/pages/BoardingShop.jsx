@@ -123,6 +123,11 @@ export default function BoardingShop() {
 
     return response.data;
   };
+  const getBoardingRequests = async () => {
+    const response = await axios.get(`${config.baseURL}/api/boardingrequests`);
+    return response.data;
+  };
+
   const fetchData = async () => {
     setLoading(true);
     try {
@@ -207,7 +212,15 @@ export default function BoardingShop() {
 
   const handleApproveRequest = async (request) => {
     try {
-      // In a real app, this would call an API to approve the request
+      console.log(request._id);
+
+      const response = await axios.put(
+        `${config.baseURL}/api/boardingrequests/${request._id}`,
+        { status: "Approved" }
+      );
+      if (response.status !== 200) {
+        throw new Error("Failed to approve request");
+      }
       console.log("Approving request:", request);
       // Refresh data
       fetchData();
@@ -218,7 +231,15 @@ export default function BoardingShop() {
 
   const handleDenyRequest = async (request) => {
     try {
-      // In a real app, this would call an API to deny the request
+      console.log(request._id);
+
+      const response = await axios.put(
+        `${config.baseURL}/api/boardingrequests/${request._id}`,
+        { status: "Rejected" }
+      );
+      if (response.status !== 200) {
+        throw new Error("Failed to approve request");
+      }
       console.log("Denying request:", request);
       // Refresh data
       fetchData();
@@ -246,6 +267,10 @@ export default function BoardingShop() {
     {
       name: "Booked Cages",
       count: cages.filter((c) => c.status === "Occupied").length,
+    },
+    {
+      name: "Approved Boarding Requests",
+      count: requests.filter((r) => r.status === "Approved").length,
     },
     {
       name: "Boarding Requests",
@@ -304,7 +329,35 @@ export default function BoardingShop() {
             />
           </>
         );
-      case 2: // Boarding Requests
+      case 2: // Approved Boarding Requests
+        return (
+          <>
+            <div className="mb-6">
+              <h2 className="text-xl font-semibold">
+                Approved Boarding Requests
+              </h2>
+            </div>
+            <DataTable
+              data={requests.filter((req) => req.status === "Approved")}
+              columns={requestColumns}
+              //actions={true}
+              // actionButtons={[
+              //   {
+              //     label: "Approve",
+              //     onClick: handleApproveRequest,
+              //     className: "text-green-600 hover:text-green-900",
+              //   },
+              //   {
+              //     label: "Deny",
+              //     onClick: handleDenyRequest,
+              //     className: "text-red-600 hover:text-red-900",
+              //   },
+              // ]}
+            />
+          </>
+        );
+      
+      case 3: // Boarding Requests
         return (
           <>
             <div className="mb-6">
@@ -331,7 +384,8 @@ export default function BoardingShop() {
             />
           </>
         );
-      case 3: // Extension Requests
+      
+      case 4: // Extension Requests
         return (
           <>
             <div className="mb-6">
@@ -356,7 +410,7 @@ export default function BoardingShop() {
             />
           </>
         );
-      case 4: // Boarding History
+      case 5: // Boarding History
         return (
           <>
             <div className="mb-6">
