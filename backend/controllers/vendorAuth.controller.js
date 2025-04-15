@@ -99,14 +99,17 @@ export const vendorLogout = (req, res) => {
 
 export const checkauth = async (req, res) => {
   try {
-      // User is already verified by protectroute middleware
-      const user = await Vendor.findById(req.user.id).select("-password");
-      if (!user) {
-          return res.status(401).json({ message: "User not found" });
-      }
-      res.status(200).json(user);
+    console.log("✅ req.user:", req.user); // ADD THIS
+
+    const user = await Vendor.findById(req.user.userid).select("-password");
+
+    if (!user) {
+      return res.status(401).json({ message: "User not found" });
+    }
+    res.status(200).json(user);
   } catch (error) {
-      console.error("Check auth error:", error);
-      res.status(500).json({ message: "Server error" });
+    console.error("Check auth error:", error);
+    res.status(500).json({ message: "Server error" });
   }
 };
+

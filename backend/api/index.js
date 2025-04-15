@@ -17,14 +17,15 @@ app.use(cookieParser());
 app.use(
   cors({
     origin: "http://localhost:5173",
-    credentials: true, 
+    credentials: true
   })
 );
 
 connectDB();
 
 
-app.use("/api/vendors", vendorRoutes);   
+app.use("/api/vendors", vendorRoutes); 
+app.use("/api/matingpets", matingPetRoutes);  
 
 app.listen(PORT, () => {
   console.log(`✅ Server running on port ${PORT}`);

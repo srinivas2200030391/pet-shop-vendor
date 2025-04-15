@@ -22,18 +22,30 @@ export const getMatingPetsByVendor = async (req, res) => {
   }
 };
 
-// Update availability
-export const updateAvailability = async (req, res) => {
+// Update full mating pet data
+export const updateMatingPet = async (req, res) => {
   try {
     const { petId } = req.params;
-    const { availability } = req.body;
-    const updated = await MatingPet.findByIdAndUpdate(
+    const updatedPet = await MatingPet.findByIdAndUpdate(
       petId,
-      { availability },
+      req.body,
       { new: true }
     );
-    res.status(200).json(updated);
+    res.status(200).json({ message: "Mating pet updated", pet: updatedPet });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
 };
+
+
+// Delete mating pet
+export const deleteMatingPet = async (req, res) => {
+  try {
+    const { petId } = req.params;
+    await MatingPet.findByIdAndDelete(petId);
+    res.status(200).json({ message: "Mating pet deleted" });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
