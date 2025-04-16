@@ -10,7 +10,6 @@ export function PetForm({ pet = {}, onSave, onCancel }) {
     price: pet.price || "",
     status: pet.status || "available",
     gender: pet.gender || "",
-    color: pet.color || "",
     weight: pet.weight || "",
     description: pet.description || "",
     imageUrl: pet.imageUrl || "",
@@ -106,6 +105,21 @@ export function PetForm({ pet = {}, onSave, onCancel }) {
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
+                Status
+              </label>
+              <select
+                name="status"
+                value={formData.status}
+                onChange={handleChange}
+                className="w-full p-2 border rounded-md"
+                required>
+                <option value="">Select Status</option>
+                <option value="Available">Available</option>
+                <option value="UnAvailable">UnAvailable</option>
+              </select>
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
                 Gender
               </label>
               <select
@@ -134,18 +148,7 @@ export function PetForm({ pet = {}, onSave, onCancel }) {
               />
             </div>
 
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Color
-              </label>
-              <input
-                type="text"
-                name="color"
-                value={formData.color}
-                onChange={handleChange}
-                className="w-full p-2 border rounded-md"
-              />
-            </div>
+  
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">

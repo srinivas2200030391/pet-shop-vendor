@@ -45,6 +45,7 @@ export default function AvailablePets() {
       accessor: "price",
       render: (row) => `$${parseFloat(row.price).toFixed(2)}`,
     },
+    { header: "Status", accessor: "status" },
   ];
 
   useEffect(() => {

@@ -12,6 +12,11 @@ const AboutPetSchema = new mongoose.Schema({
   category: { type: String, required: true },
   height: { type: String, required: true },
   weight: { type: String, required: true },
+  status: {
+    type: String,
+    enum: ["Available", "UnAvailable"],
+    default: "Available",
+  },
   lifeSpan: { type: String, required: true }, // camelCase
   characteristics: { type: String, required: true }, // camelCase + plural
 });
