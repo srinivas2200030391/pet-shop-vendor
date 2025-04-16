@@ -4,7 +4,7 @@ import { X } from "lucide-react";
 export function PetForm({ pet = {}, onSave, onCancel }) {
   const [formData, setFormData] = useState({
     name: pet.name || "",
-    type: pet.type || "",
+    category: pet.category || "",
     breed: pet.breed || "",
     age: pet.age || "",
     price: pet.price || "",
@@ -60,11 +60,11 @@ export function PetForm({ pet = {}, onSave, onCancel }) {
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
-                Type
+                category
               </label>
               <select
                 name="type"
-                value={formData.type}
+                value={formData.category}
                 onChange={handleChange}
                 className="w-full p-2 border rounded-md"
                 required>

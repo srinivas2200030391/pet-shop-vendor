@@ -9,7 +9,7 @@ import bookedCageRoutes from "../routes/bookedCage.route.js";
 import boardingRequestRoutes from "../routes/boardingrequest.route.js";
 import boardingHistoryRoutes from "../routes/boardinghistory.route.js";
 import extensionRequestRoutes from "../routes/extensionrequest.route.js";
-
+import aboutPetRoute from "../routes/aboutpet.route.js";
 import vendorRoutes from "../routes/auth.route.js";
 
 const app = express();
@@ -32,7 +32,7 @@ app.use("/api/cages", cageRoutes);
 app.use("/api/bookedCages", bookedCageRoutes);
 app.use("/api/boardingrequests", boardingRequestRoutes);
 app.use("/api/boardingHistories", boardingHistoryRoutes);
-
+app.use("/api/aboutpet", aboutPetRoute);
 app.use("/api/vendors", vendorRoutes); 
 app.use("/api/matingpets", matingPetRoutes);  
 app.use("/api/extensions", extensionRequestRoutes);

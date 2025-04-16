@@ -4,13 +4,9 @@ import { DataTable } from "../components/DataTable";
 import { PetForm } from "../components/PetForm";
 import { ConfirmationModal } from "../components/ConfirmationModel";
 import { Plus } from "lucide-react";
-import {
-  getAvailablePets,
-  addPet,
-  updatePet,
-  deletePet,
-} from "../services/petService";
-
+import { addPet, updatePet, deletePet } from "../services/petService";
+import axios from "axios";
+import config from "../config";
 export default function AvailablePets() {
   const [pets, setPets] = useState([]);
   const [showAddForm, setShowAddForm] = useState(false);
@@ -40,7 +36,7 @@ export default function AvailablePets() {
       ),
     },
     { header: "Name", accessor: "name" },
-    { header: "Type", accessor: "type" },
+    { header: "Category", accessor: "category" },
     { header: "Breed", accessor: "breed" },
     { header: "Age", accessor: "age" },
     { header: "Gender", accessor: "gender" },
@@ -55,6 +51,20 @@ export default function AvailablePets() {
     fetchPets();
   }, []);
 
+  const getAvailablePets = async () => {
+    try {
+      const response = await axios.get(
+        `${config.baseURL}/api/aboutpet/getallaboutpet`
+      );
+      setPets(response.data);
+      console.log("Available pets:", response.data);
+
+      return response.data;
+    } catch (error) {
+      console.error("Error fetching pets:", error);
+      return [];
+    }
+  };
   const fetchPets = async () => {
     setLoading(true);
     try {
