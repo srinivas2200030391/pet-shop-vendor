@@ -3,17 +3,17 @@ import { X } from "lucide-react";
 
 export function PetForm({ pet = {}, onSave, onCancel }) {
   const [formData, setFormData] = useState({
+    ...pet,
     name: pet.name || "",
     category: pet.category || "",
     breed: pet.breed || "",
     age: pet.age || "",
     price: pet.price || "",
-    status: pet.status || "available",
+    status: pet.status || "Available",
     gender: pet.gender || "",
     weight: pet.weight || "",
     description: pet.description || "",
     imageUrl: pet.imageUrl || "",
-    ...pet,
   });
 
   const handleChange = (e) => {
@@ -34,7 +34,7 @@ export function PetForm({ pet = {}, onSave, onCancel }) {
       <div className="bg-white rounded-lg w-3/4 max-w-4xl overflow-hidden">
         <div className="flex justify-between items-center p-4 bg-blue-600 text-white">
           <h2 className="text-xl font-bold">
-            {pet.id ? "Edit Pet" : "Add New Pet"}
+            {pet._id ? "Edit Pet" : "Add New Pet"}
           </h2>
           <button onClick={onCancel} className="text-white">
             <X size={24} />
@@ -62,7 +62,7 @@ export function PetForm({ pet = {}, onSave, onCancel }) {
                 category
               </label>
               <select
-                name="type"
+                name="category"
                 value={formData.category}
                 onChange={handleChange}
                 className="w-full p-2 border rounded-md"
@@ -148,8 +148,6 @@ export function PetForm({ pet = {}, onSave, onCancel }) {
               />
             </div>
 
-  
-
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
                 Weight (kg)
@@ -200,7 +198,7 @@ export function PetForm({ pet = {}, onSave, onCancel }) {
             <button
               type="submit"
               className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700">
-              {pet.id ? "Update Pet" : "Add Pet"}
+              {pet._id ? "Update Pet" : "Add Pet"}
             </button>
           </div>
         </form>

@@ -2,6 +2,8 @@ import AboutPet from "../models/aboutpet.model.js";
 
 const aboutPet = {
   createAbout: async (req, res) => {
+    console.log("Request body:", req.body); // Log the request body
+    
     const aboutPet = new AboutPet(req.body);
     try {
       await aboutPet.save();
@@ -24,35 +26,16 @@ const aboutPet = {
     }
   },
 
-  getAllDogs: async (req, res) => {
+  getAllPets: async (req, res) => {
     try {
-      const dogDetails = await AboutPet.find({ category: "Dog" });
-      if (!dogDetails || dogDetails.length === 0) {
+      const item = req.params.item;
+      // capitalize the first letter of the item
+      const category = item.charAt(0).toUpperCase() + item.slice(1);
+      const itemDetails = await AboutPet.find({ category: category });
+      if (!itemDetails || itemDetails.length === 0) {
         return res.status(404).json("No dogs found");
       }
-      res.status(200).json(dogDetails);
-    } catch (error) {
-      res.status(500).json(error.message);
-    }
-  },
-  getAllCats: async (req, res) => {
-    try {
-      const catDetails = await AboutPet.find({ category: "Cat" });
-      if (!catDetails || catDetails.length === 0) {
-        return res.status(404).json("No cats found");
-      }
-      res.status(200).json(catDetails);
-    } catch (error) {
-      res.status(500).json(error.message);
-    }
-  },
-  getAllBirds: async (req, res) => {
-    try {
-      const birdDetails = await AboutPet.find({ Category: "bird" });
-      if (!birdDetails || birdDetails.length === 0) {
-        return res.status(404).json("No birds found");
-      }
-      res.status(200).json(birdDetails);
+      res.status(200).json(itemDetails);
     } catch (error) {
       res.status(500).json(error.message);
     }
@@ -116,6 +99,39 @@ const aboutPet = {
       res
         .status(500)
         .json({ message: "Something went wrong, darling 💔", error });
+    }
+  },
+  updatePets: async (req, res) => {
+    try {
+      const { id } = req.params;
+      const body = req.body;
+      const updateResult = await AboutPet.findByIdAndUpdate(id, body, {
+        new: true,
+      });
+      if (!updateResult) {
+        return res.status(404).json("Pet not found");
+      }
+      res.status(200).json({
+        message: "Pet updated successfully",
+        result: updateResult,
+      });
+    } catch (error) {
+      res.status(500).json({ message: "Something went wrong", error });
+    }
+  },
+  deletePets: async (req, res) => {
+    try {
+      const { id } = req.params;
+      const deleteResult = await AboutPet.findByIdAndDelete(id);
+      if (!deleteResult) {
+        return res.status(404).json("Pet not found");
+      }
+      res.status(200).json({
+        message: "Pet deleted successfully",
+        result: deleteResult,
+      });
+    } catch (error) {
+      res.status(500).json({ message: "Something went wrong", error });
     }
   },
 };

@@ -4,7 +4,6 @@ import { DataTable } from "../components/DataTable";
 import { PetForm } from "../components/PetForm";
 import { ConfirmationModal } from "../components/ConfirmationModel";
 import { Plus } from "lucide-react";
-import { addPet, updatePet, deletePet } from "../services/petService";
 import axios from "axios";
 import config from "../config";
 export default function AvailablePets() {
@@ -57,10 +56,9 @@ export default function AvailablePets() {
       const response = await axios.get(
         `${config.baseURL}/api/aboutpet/getallaboutpet`
       );
-      setPets(response.data);
-      console.log("Available pets:", response.data);
-
-      return response.data;
+      // set pets only if status is "Available"
+      const availablePets = response.data.filter((pet) => pet.status === "Available");
+      return availablePets;
     } catch (error) {
       console.error("Error fetching pets:", error);
       return [];
@@ -78,6 +76,22 @@ export default function AvailablePets() {
     }
   };
 
+  const addPet = async (pet) => {
+    try {
+      // capitalize pet.status
+      pet.status = pet.status.charAt(0).toUpperCase() + pet.status.slice(1);
+      console.log(pet);
+      const response = await axios.post(
+        `${config.baseURL}/api/aboutpet/createaboutpet`,
+        pet
+      );
+      console.log("Pet added:", response.data);
+      return response.data;
+    } catch (error) {
+      console.error("Error adding pet:", error);
+      throw error;
+    }
+  };
   const handleAddPet = async (pet) => {
     try {
       await addPet({ ...pet, status: "available" });
@@ -92,8 +106,22 @@ export default function AvailablePets() {
     setEditingPet(pet);
   };
 
+  const updatePet = async (pet) => {
+    try {
+      const response = await axios.put(
+        `${config.baseURL}/api/aboutpet/updateaboutpet/${pet._id}`,
+        pet
+      );
+      console.log("Pet updated:", response.data);
+      return response.data;
+    } catch (error) {
+      console.error("Error updating pet:", error);
+      throw error;
+    }
+  };
   const handleUpdatePet = async (updatedPet) => {
     try {
+      console.log("Updating pet:", updatedPet);
       await updatePet(updatedPet);
       fetchPets();
       setEditingPet(null);
@@ -107,9 +135,20 @@ export default function AvailablePets() {
     setShowDeleteConfirmation(true);
   };
 
+  const deletePet = async (petId) => {
+    try {
+      const response = await axios.delete(
+        `${config.baseURL}/api/aboutpet/deleteaboutpet/${petId}`
+      );
+      console.log("Pet deleted:", response.data);
+      return response.data;
+    } catch (error) {
+      console.error("Error deleting pet:", error);
+    }
+  };
   const handleDeletePet = async () => {
     try {
-      await deletePet(petToDelete.id);
+      await deletePet(petToDelete._id);
       fetchPets();
       setShowDeleteConfirmation(false);
       setPetToDelete(null);

@@ -1,3 +1,5 @@
+import mongoose from "mongoose";
+
 const ExtensionRequestSchema = new mongoose.Schema({
   boardingRequest: {
     type: mongoose.Schema.Types.ObjectId,

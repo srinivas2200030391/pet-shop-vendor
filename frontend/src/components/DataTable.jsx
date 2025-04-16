@@ -16,6 +16,8 @@ export function DataTable({
 
   // Apply filters and search
   const filteredData = data.filter((item) => {
+    console.log(columns);
+    
     // Apply search
     if (searchTerm) {
       const searchCheck = columns.some((column) =>

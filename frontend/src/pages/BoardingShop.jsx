@@ -1,10 +1,6 @@
 import { useState, useEffect } from "react";
 import { DataTable } from "../components/DataTable";
-import {
-  //getBoardingCages,
-  getBoardingRequests,
-  getBoardingHistory,
-} from "../services/petService.js";
+import { getBoardingHistory } from "../services/petService.js";
 import { Plus } from "lucide-react";
 import { CageForm } from "../components/CageForm";
 import { ConfirmationModal } from "./../components/ConfirmationModel";
@@ -16,6 +12,7 @@ export default function BoardingShop() {
   const [cages, setCages] = useState([]);
   const [requests, setRequests] = useState([]);
   const [history, setHistory] = useState([]);
+  const [extension, setExtension] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showAddCageForm, setShowAddCageForm] = useState(false);
   const [editingCage, setEditingCage] = useState(null);
@@ -90,6 +87,21 @@ export default function BoardingShop() {
     },
     { header: "Status", accessor: "status" },
   ];
+  const extendColumns = [
+    { header: "Boarding Request ID", accessor: "boardingRequest" },
+    {
+      header: "Requested End Date",
+      accessor: "requestedEndDate",
+      render: (row) => new Date(row.requestedEndDate).toLocaleDateString(),
+    },
+    { header: "Reason", accessor: "reason" },
+    { header: "Status", accessor: "status" },
+    {
+      header: "Requested At",
+      accessor: "requestedAt",
+      render: (row) => new Date(row.requestedAt).toLocaleString(),
+    },
+  ];
 
   const historyColumns = [
     { header: "Boarding ID", accessor: "boardingId" },
@@ -127,20 +139,26 @@ export default function BoardingShop() {
     const response = await axios.get(`${config.baseURL}/api/boardingrequests`);
     return response.data;
   };
+  const getBoardingExtensionRequests = async () => {
+    const response = await axios.get(`${config.baseURL}/api/extensions`);
+    return response.data;
+  };
 
   const fetchData = async () => {
     setLoading(true);
     try {
-      const [cagesData, requestsData, historyData] = await Promise.all([
-        getBoardingCages(),
-        getBoardingRequests(),
-        getBoardingHistory(),
-      ]);
+      const [cagesData, requestsData, historyData, extension] =
+        await Promise.all([
+          getBoardingCages(),
+          getBoardingRequests(),
+          getBoardingHistory(),
+          getBoardingExtensionRequests(),
+        ]);
       setCages(cagesData);
       console.log("cagesData", cagesData);
-
       setRequests(requestsData);
       setHistory(historyData);
+      setExtension(extension);
     } catch (error) {
       console.error("Error fetching boarding data:", error);
     } finally {
@@ -247,10 +265,35 @@ export default function BoardingShop() {
       console.error("Error denying request:", error);
     }
   };
+  const handleDenyExtensionRequest = async (request) => {
+    try {
+      console.log(request._id);
+
+      const response = await axios.delete(
+        `${config.baseURL}/api/extensions/${request._id}`
+      );
+      if (response.status !== 200) {
+        throw new Error("Failed to approve request");
+      }
+      console.log("Denying request:", request);
+      // Refresh data
+      fetchData();
+    } catch (error) {
+      console.error("Error denying request:", error);
+    }
+  };
 
   const handleExtendBoardingRequest = async (request) => {
     try {
       // In a real app, this would call an API to handle the extension request
+      const response = await axios.put(
+        `${config.baseURL}/api/extensions/${request._id}`,
+        { status: "Approved" }
+      );
+      if (response.status !== 200) {
+        throw new Error("Failed to handle extension request");
+      }
+
       console.log("Handling extension request:", request);
       // Refresh data
       fetchData();
@@ -278,7 +321,7 @@ export default function BoardingShop() {
     },
     {
       name: "Extension Requests",
-      count: requests.filter((r) => r.status === "Extension Required").length,
+      count: extension.length,
     },
     { name: "Boarding History", count: history.length },
   ];
@@ -356,7 +399,7 @@ export default function BoardingShop() {
             />
           </>
         );
-      
+
       case 3: // Boarding Requests
         return (
           <>
@@ -384,7 +427,7 @@ export default function BoardingShop() {
             />
           </>
         );
-      
+
       case 4: // Extension Requests
         return (
           <>
@@ -392,18 +435,18 @@ export default function BoardingShop() {
               <h2 className="text-xl font-semibold">Extension Requests</h2>
             </div>
             <DataTable
-              data={cages.filter((cage) => cage.status === "ExtensionRequired")}
-              columns={requestColumns}
+              data={extension}
+              columns={extendColumns}
               actions={true}
               actionButtons={[
                 {
                   label: "Approve",
-                  onClick: handleApproveRequest,
+                  onClick: handleExtendBoardingRequest,
                   className: "text-green-600 hover:text-green-900",
                 },
                 {
                   label: "Deny",
-                  onClick: handleDenyRequest,
+                  onClick: handleDenyExtensionRequest,
                   className: "text-red-600 hover:text-red-900",
                 },
               ]}
